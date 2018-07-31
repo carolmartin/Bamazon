@@ -56,27 +56,28 @@ function start() {
 
         // function to check if product is available or not
 
-        console.log("checkIfAvailable");
+        console.log("answer: " + answer);
         // var chosenItem;
         for (var i = 0; i < results.length; i++) {
-          if (results[i].item_name === answer.choice) {
+          if (results[i].product_name === answer.choice) {
             chosenItem = results[i];
             console.log("In checkIfAvailable chosenItem: " + chosenItem);
           }
         }
 
         // determine quantity available is more than requested
+        console.log(chosenItem);
         if (chosenItem.stock_quantity >= parseInt(answer.quantity)) {
           // Decrease stock_quantity in db by amount requested, let the user know, and start over
           var updatedQuantity = chosenItem.stock_quantity - parseInt(answer.quantity);
           connection.query(
-            "UPDATE products SET stock_quantity WHERE ?",
+            "UPDATE products SET ? WHERE ?",
             [
               {
                 stock_quantity: updatedQuantity
               },
               {
-                id: chosenItem.id
+                item_id: chosenItem.item_id
               }
             ],
             function (error) {
