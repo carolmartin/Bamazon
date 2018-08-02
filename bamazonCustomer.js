@@ -1,3 +1,5 @@
+// use mysql and inquirer npm methods
+
 var mysql = require("mysql");
 var inquirer = require("inquirer");
 
@@ -11,10 +13,12 @@ var connection = mysql.createConnection({
   // Your username
   user: "root",
 
+
   // Your password
   password: "root",
   database: "bamazon_DB"
 });
+
 // connect to the mysql server and sql database
 connection.connect(function (err) {
   if (err) throw err;
@@ -28,8 +32,8 @@ function start() {
   // query the database for all items being auctioned
   connection.query("SELECT * FROM products", function (err, results) {
     if (err) throw err;
-    //Display the available items from the prodcut table
-    console.log(results);
+    //Display the available items from the product table
+    // console.log(results);
     // once you have the items, prompt the user for which they'd like to buy     
     inquirer
       .prompt([
@@ -56,17 +60,17 @@ function start() {
 
         // function to check if product is available or not
 
-        console.log("answer: " + answer);
+        // console.log("answer: " + answer);
         // var chosenItem;
         for (var i = 0; i < results.length; i++) {
           if (results[i].product_name === answer.choice) {
             chosenItem = results[i];
-            console.log("In checkIfAvailable chosenItem: " + chosenItem);
+            // console.log("In checkIfAvailable chosenItem: " + chosenItem);
           }
         }
 
         // determine quantity available is more than requested
-        console.log(chosenItem);
+        // console.log(chosenItem);
         if (chosenItem.stock_quantity >= parseInt(answer.quantity)) {
           // Decrease stock_quantity in db by amount requested, let the user know, and start over
           var updatedQuantity = chosenItem.stock_quantity - parseInt(answer.quantity);
@@ -83,13 +87,16 @@ function start() {
             function (error) {
               if (error) throw err;
               console.log("Purchase completed and updated quantity!");
+              var totalAmt = chosenItem.price * parseInt(answer.quantity);
+              console.log("Your total purchase is : $" + totalAmt.toFixed(2) + ".");
               start();
             }
           );
         }
         else {
           // Quantity requested not availble, so apologize and start over
-          console.log("Sorry, quanity not available. Try again...");
+          console.log("Sorry, quantity not available. Try again...");
+          console.log("The item, " + chosenItem.product_name + ", has only " + chosenItem.stock_quantity + " available.");
           start();
         }
 
